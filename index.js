@@ -1,7 +1,9 @@
 require('dotenv').config(); // Load environment variables from .env file
 const express = require('express')
+const cors = require('cors'); // Import the cors package
 const app = express()
 app.use(express.json());
+app.use(cors()); // Enable CORS for all routes
 const port = 8080
 const {
   clusterApiUrl,
