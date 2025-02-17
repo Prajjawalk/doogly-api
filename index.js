@@ -53,7 +53,7 @@ app.post('/deposit', async (req, res) => {
 })
 
 app.get('/status', async (req, res) => {
-  const { transactionId, fromChainId, toChainId, bridgeType } = req.query; // Extract parameters from the request query
+  const { transactionId, fromChainId, toChainId, requestId, bridgeType } = req.query; // Extract parameters from the request query
   const result = await fetch(
     "https://apiplus.squidrouter.com/v2/status",
     {
@@ -61,6 +61,7 @@ app.get('/status', async (req, res) => {
         transactionId: transactionId,
         fromChainId: fromChainId,
         toChainId: toChainId,
+        requestid: requestId,
         bridgeType: bridgeType,
       },
       headers: {
