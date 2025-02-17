@@ -3,8 +3,6 @@ const express = require('express')
 const cors = require('cors'); // Import the cors package
 const app = express()
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
 
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(cors()); // Enable CORS for all routes
@@ -90,12 +88,11 @@ app.post('/deposit', logRequestResponse, async (req, res) => {
   resp["x-request-id"] = result.headers.get('x-request-id');
   res.json(resp);
 })
-
 app.get('/status', logRequestResponse, async (req, res) => {
+  const {transactionId, requestId, fromChainId, toChainId, bridgeType} = req.query;
   const result = await fetch(
-    "https://apiplus.squidrouter.com/v2/status",
+    `https://apiplus.squidrouter.com/v2/status?transactionId=${transactionId}&requestId=${requestId}&fromChainId=${fromChainId}&toChainId=${toChainId}&bridgeType=${bridgeType}`,
     {
-      params: req.query,
       headers: {
         "Content-Type": "application/json",
         "x-integrator-id": process.env.DOOGLY_SRID,
