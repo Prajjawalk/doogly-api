@@ -15,7 +15,7 @@ const {
 } = require("@solana/web3.js");
 
 // Middleware to log request and response details
-app.use(async (req, res, next) => {
+const logRequestResponse = async (req, res, next) => {
   // Log request details
   const requestDetails = {
     method: req.method,
@@ -48,10 +48,10 @@ app.use(async (req, res, next) => {
   };
 
   next();
-});
+};
 
 // Post request to Squid router /route api
-app.post('/route', async (req, res) => {
+app.post('/route', logRequestResponse, async (req, res) => {
   const result = await fetch("https://apiplus.squidrouter.com/v2/route", {
     method: 'POST',
     body: JSON.stringify(req.body),
@@ -71,7 +71,7 @@ app.post('/route', async (req, res) => {
   res.json(resp);
 })
 
-app.post('/deposit', async (req, res) => {
+app.post('/deposit', logRequestResponse, async (req, res) => {
   const result = await fetch("https://apiplus.squidrouter.com/v2/deposit-address", {
     method: "POST",
     body: JSON.stringify(req.body),
@@ -91,7 +91,7 @@ app.post('/deposit', async (req, res) => {
   res.json(resp);
 })
 
-app.get('/status', async (req, res) => {
+app.get('/status', logRequestResponse, async (req, res) => {
   const result = await fetch(
     "https://apiplus.squidrouter.com/v2/status",
     {
@@ -128,7 +128,7 @@ app.get('/info', async (req, res) => {
   res.json(resp);
 })
 
-app.get('/blockhash', async (req, res) => {
+app.get('/blockhash', logRequestResponse, async (req, res) => {
   const connection = new Connection(
     clusterApiUrl("mainnet-beta"),
     "confirmed"
