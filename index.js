@@ -2,13 +2,53 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express')
 const cors = require('cors'); // Import the cors package
 const app = express()
-app.use(express.json());
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
+
+app.use(bodyParser.json()); // Parse JSON bodies
 app.use(cors()); // Enable CORS for all routes
 const port = 8080
 const {
   clusterApiUrl,
   Connection,
 } = require("@solana/web3.js");
+
+// Middleware to log request and response details
+app.use(async (req, res, next) => {
+  // Log request details
+  const requestDetails = {
+    method: req.method,
+    url: req.originalUrl,
+    headers: req.headers,
+    body: req.body,
+    timestamp: new Date().toISOString(),
+  };
+
+  // Log the request details to a file or console
+  console.log('Request:', JSON.stringify(requestDetails, null, 2));
+
+  // Capture the original send method
+  const originalSend = res.send.bind(res);
+
+  // Override the send method to capture the response
+  res.send = async (body) => {
+    // Log response details
+    const responseDetails = {
+      status: res.statusCode,
+      headers: res.getHeaders(),
+      body: body,
+    };
+
+    // Log the response details to a file or console
+    console.log('Response:', JSON.stringify(responseDetails, null, 2));
+
+    // Call the original send method
+    return originalSend(body);
+  };
+
+  next();
+});
 
 // Post request to Squid router /route api
 app.post('/route', async (req, res) => {
@@ -52,17 +92,10 @@ app.post('/deposit', async (req, res) => {
 })
 
 app.get('/status', async (req, res) => {
-  const { transactionId, fromChainId, toChainId, requestId, bridgeType } = req.query; // Extract parameters from the request query
   const result = await fetch(
     "https://apiplus.squidrouter.com/v2/status",
     {
-      params: {
-        transactionId: transactionId,
-        fromChainId: fromChainId,
-        toChainId: toChainId,
-        requestid: requestId,
-        bridgeType: bridgeType,
-      },
+      params: req.query,
       headers: {
         "Content-Type": "application/json",
         "x-integrator-id": process.env.DOOGLY_SRID,
