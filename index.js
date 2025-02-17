@@ -90,15 +90,15 @@ app.post('/deposit', logRequestResponse, async (req, res) => {
 })
 app.get('/status', logRequestResponse, async (req, res) => {
   const {transactionId, requestId, fromChainId, toChainId, bridgeType} = req.query;
-  const result = await fetch(
-    `https://apiplus.squidrouter.com/v2/status?transactionId=${transactionId}&requestId=${requestId}&fromChainId=${fromChainId}&toChainId=${toChainId}&bridgeType=${bridgeType}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "x-integrator-id": process.env.DOOGLY_SRID,
-      }
+  const baseUrl = `https://apiplus.squidrouter.com/v2/status?transactionId=${transactionId}&requestId=${requestId}&fromChainId=${fromChainId}&toChainId=${toChainId}`;
+  const url = bridgeType ? `${baseUrl}&bridgeType=${bridgeType}` : baseUrl; // Conditionally add bridgeType
+
+  const result = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      "x-integrator-id": process.env.DOOGLY_SRID,
     }
-  );
+  });
 
   const resp = await result.json();
   if (!result.ok) { // Check if the response status is not OK
