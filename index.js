@@ -43,7 +43,7 @@ app.post('/deposit', async (req, res) => {
 
   const resp = await result.json();
   if (!result.ok) { // Check if the response status is not OK
-    const errorResp = await result.json();
+    const errorResp = resp;
     return res.status(result.status).json({ error: errorResp.message || 'Error occurred' });
   }
   
@@ -72,8 +72,7 @@ app.get('/status', async (req, res) => {
 
   const resp = await result.json();
   if (!result.ok) { // Check if the response status is not OK
-    const errorResp = await result.json();
-    return res.status(result.status).json({ error: errorResp.message || 'Error occurred' });
+    return res.status(result.status).json({ error: resp.message || 'Error occurred' });
   }
   
   resp["x-request-id"] = result.headers.get('x-request-id');
@@ -89,7 +88,7 @@ app.get('/info', async (req, res) => {
   });
   const resp = await result.json();
   if (!result.ok) { // Check if the response status is not OK
-    const errorResp = await result.json();
+    const errorResp = resp;
     return res.status(result.status).json({ error: errorResp.message || 'Error occurred' });
   }
   
