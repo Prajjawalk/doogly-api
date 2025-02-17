@@ -27,8 +27,7 @@ app.post('/route', async (req, res) => {
   }
 
   const resp = await result.json();
-  console.log(resp);
-  res.setHeader("x-request-id", result.headers.get('x-request-id'));
+  resp["x-request-id"] = result.headers.get('x-request-id');
   res.json(resp);
 })
 
@@ -48,7 +47,7 @@ app.post('/deposit', async (req, res) => {
     return res.status(result.status).json({ error: errorResp.message || 'Error occurred' });
   }
   
-  res.setHeader("x-request-id", result.headers.get('x-request-id'));
+  resp["x-request-id"] = result.headers.get('x-request-id');
   res.json(resp);
 })
 
@@ -77,7 +76,7 @@ app.get('/status', async (req, res) => {
     return res.status(result.status).json({ error: errorResp.message || 'Error occurred' });
   }
   
-  res.setHeader("x-request-id", result.headers.get('x-request-id'));
+  resp["x-request-id"] = result.headers.get('x-request-id');
   res.json(resp);
 })
 
